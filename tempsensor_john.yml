@@ -1,0 +1,48 @@
+esphome:
+  name: esp-temp
+
+esp32:
+  board: az-delivery-devkit-v4
+
+wifi:
+  ssid: "TP-Link_10C2"
+  password: "97813002"
+
+dallas:
+  - pin: 27
+
+#Individual sensors
+sensor:
+  - platform: dallas
+    address: 0xd03c01d0751cbc28
+    name: "Livingroom Temperature"
+    id: temp
+    internal: true
+
+interval:
+  - interval: 120s
+    then:
+    - mqtt.publish:
+        topic: channels/2378044/publish/fields/field1
+        payload: !lambda |-
+             return to_string(id(temp).state);        
+
+logger:
+  baud_rate: 115200
+  level: VERBOSE
+  logs:
+    mqtt.component: ERROR
+    mqtt.client: ERROR
+
+mqtt:
+  broker: 'mqtt3.thingspeak.com' 
+  port: '1883'
+  client_id: 'PSEnIhMRPDEsKSssMggKOCQ'
+  username: 'PSEnIhMRPDEsKSssMggKOCQ'
+  password: 'qEF6Y9qXj3PxGWkZMJFaQPid'
+  discovery: 'false'
+  discovery_retain: 'false'
+  birth_message: # leave empty
+  will_message: # leave empty
+  log_topic: #leave empty
+  topic_prefix: 'channels'
